@@ -1,6 +1,6 @@
 # ToxMap Berlin (English Version)
 
-ToxMap Berlin is an interactive website that displays environmentally harmful locations on a map in Berlin. Locations can be added either via coordinates or by providing an address (street, house number, postal code, and city). Each location can be accompanied by a description, specifying the type and severity of environmental pollution.
+ToxMap Berlin is an interactive website developed as part of a university project that displays environmentally harmful locations on a map in Berlin. Locations can be added either via coordinates or by providing an address (street, house number, postal code, and city). Each location can be accompanied by a description, specifying the type and severity of environmental pollution.
 
 ## Features
 
@@ -42,7 +42,7 @@ You can find a live demo of the website at [toxmap.friedrichvoelkers.de](https:/
 
 # ToxMap Berlin (German Version)
 
-ToxMap Berlin ist eine interaktive Webseite, die umweltschädliche Standorte in Berlin auf einer Karte anzeigt. Die Standorte können entweder über Koordinaten oder über eine Adresse (Straße, Hausnummer, PLZ und Stadt) hinzugefügt werden. Jeder Standort kann mit einer Beschreibung versehen werden, die die Art der Umweltverschmutzung beschreibt und wie stark sie ist.
+ToxMap Berlin ist eine interaktive Webseite, die im Rahmen eines Universitätsprojekts entwickelt wurde und umweltschädliche Standorte in Berlin auf einer Karte anzeigt. Die Standorte können entweder über Koordinaten oder über eine Adresse (Straße, Hausnummer, PLZ und Stadt) hinzugefügt werden. Jeder Standort kann mit einer Beschreibung versehen werden, die die Art der Umweltverschmutzung beschreibt und wie stark sie ist.
 
 ## Funktionen
 
