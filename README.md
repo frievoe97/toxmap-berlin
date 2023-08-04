@@ -5,8 +5,8 @@ ToxMap Berlin is an interactive website developed as part of a university projec
 ## Features
 
 - Two user roles:
-  - Admin (Username: Admina, Password: password) - Can add, edit, and delete locations.
-  - Normal user (Username: Normalo, Password: password) - Can only view locations.
+  - Admin (Username: admina, Password: password) - Can add, edit, and delete locations.
+  - Normal user (Username: normalo, Password: password) - Can only view locations.
 
 ## Technologies
 
@@ -47,8 +47,8 @@ ToxMap Berlin ist eine interaktive Webseite, die im Rahmen eines Universitätspr
 ## Funktionen
 
 - Zwei Benutzerrollen:
-  - Admin (Name: Admina, Passwort: password) - Kann Standorte hinzufügen, bearbeiten und löschen.
-  - Normaler Nutzer (Name: Normalo, Passwort: password) - Kann nur Standorte ansehen.
+  - Admin (Name: admina, Passwort: password) - Kann Standorte hinzufügen, bearbeiten und löschen.
+  - Normaler Nutzer (Name: normalo, Passwort: password) - Kann nur Standorte ansehen.
 
 ## Technologien
 
