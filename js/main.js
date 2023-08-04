@@ -1,5 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////// KONSTANTEN //////////////////////////////////////////////////////////////////////////////
 
+const apiKey = window.env.API_KEY;
+
 // Konstanten für die Bildschirme
 const SCREENS = {
   LOGIN: "login-screen",
@@ -281,8 +283,7 @@ L.tileLayer(
     attribution:
       '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a>',
     id: "mapbox/streets-v11",
-    accessToken:
-      "pk.eyJ1IjoiZnJpZXZvZSIsImEiOiJjbGhpemlqZnMwY3p5M3BwMW52bmNnZG90In0.b5ARSCCL8baHu_u41W1BiQ",
+    accessToken: apiKey,
   }
 ).addTo(map);
 
