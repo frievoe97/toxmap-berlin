@@ -18,7 +18,7 @@ ToxMap Berlin is an interactive website that displays environmentally harmful lo
 
 To run the project locally, the following requirements must be met:
 
-1. For the version without MongoDB (master branch):
+1. For the version without MongoDB (main branch):
    - No additional requirements. The project can be opened directly in a web browser.
 
 2. For the version with MongoDB (node-mongo-db-version branch):
@@ -60,7 +60,7 @@ ToxMap Berlin ist eine interaktive Webseite, die umweltschädliche Standorte in 
 
 Um das Projekt lokal auszuführen, sind folgende Voraussetzungen zu erfüllen:
 
-1. Für die Version ohne MongoDB (master branch):
+1. Für die Version ohne MongoDB (main branch):
    - Keine weiteren Anforderungen. Das Projekt kann direkt im Browser geöffnet werden.
 
 2. Für die Version mit MongoDB (node-mongo-db-version branch):
