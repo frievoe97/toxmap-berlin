@@ -31,7 +31,7 @@ To run the project locally, the following requirements must be met:
 
 ```
 git clone git@github.com:frievoe97/toxmap.git
-cd toxmap-berlin
+cd toxmap
 ```
 
 2. Open the `index.html` in your preferred web browser.
@@ -73,7 +73,7 @@ Um das Projekt lokal auszuführen, sind folgende Voraussetzungen zu erfüllen:
 
 ```
 git clone git@github.com:frievoe97/toxmap.git
-cd toxmap-berlin
+cd toxmap
 ```
 
 2. Öffne die `index.html` im Browser deiner Wahl.
