@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: 🚚 Get latest code                     
         uses: actions/checkout@v3
+      - name: 📝 Create .env.js with API key
+        run: |
+          echo "window.env = { API_KEY: '$API_KEY' }" > .env.js              
       - name: 📂 SFTP uploader                       
         uses: wangyucode/sftp-upload-action@v1.4.8 # Thank you @https://github.com/wangyucode/sftp-upload-action
         with:
@@ -22,6 +25,4 @@ jobs:
           localDir: './'                         
           remoteDir: '/toxmap'                       
           exclude: '.git*,.DS_Store'
-      - name: 📝 Create .env.js with API key
-        run: |
-          echo "window.env = { API_KEY: '$API_KEY' }" > .env.js          
+      
