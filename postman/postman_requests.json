@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "51a7ce87-4e92-46a8-bff5-1392d4a89ae9",
+		"name": "MogoDB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26970335"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/nonsusLoc",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Heizkraftwerk F-Hain\",\n    \"description\":\"Das Heizkraftwerk im. Friedrichshain\", \"street\":\"Finowstr 10\",\n    \"zip\": 10247,\n    \"city\": \"Berlin\",\n    \"lat\":\"52.5\",\n    \"lng\":\"13.4\" \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/nonsusLoc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"nonsusLoc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Locations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/nonsusLoc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"nonsusLoc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post New Location",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Heizkraftwerk F-Hain\",\n    \"description\":\"Das Heizkraftwerk im. Friedrichshain\",\n    \"street\":\"Finowstr 10\",\n    \"zip\": 10247,\n    \"city\": \"Berlin\",\n    \"lat\":\"52.5\",\n    \"lng\":\"13.4\" ,\n    \"id\": 7\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/nonsusLoc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"nonsusLoc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get One Location By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/nonsusLoc/2077740595292815363",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"nonsusLoc",
+						"2077740595292815363"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put New Location",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 7,\n    \"name\":\"Heizkraftwerk F-Hain\",\n    \"description\":\"Das Heizkraftwerk im. Friedrichshain\",\n    \"street\":\"Neue Straße 10\",\n    \"zip\": 10246,\n    \"city\": \"Berlin\",\n    \"lat\":\"52.4\",\n    \"lng\":\"13.2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/nonsusLoc/2077740595292815363",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"nonsusLoc",
+						"2077740595292815363"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Location By ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/nonsusLoc/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"nonsusLoc",
+						"7"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

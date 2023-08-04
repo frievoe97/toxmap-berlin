@@ -1,0 +1,51 @@
+[{
+  "_id": {
+    "$oid": "649da2f0881702c8037f45b5"
+  },
+  "name": "Bundesgeschäftsstelle FDP",
+  "description": "Bundesgeschäftsstelle Freie Demokratische Partei",
+  "latitude": 52.5238688,
+  "longitude": 13.3849966,
+  "street": "Reinhardtstraße",
+  "zipcode": 10117,
+  "city": "Berlin",
+  "housenumber": 14,
+  "category": "stark",
+  "id": {
+    "$numberLong": "2077740595292815400"
+  }
+},
+{
+  "_id": {
+    "$oid": "649da2f0881702c8037f45b6"
+  },
+  "name": "Vattenfall Heizkraftwerk Moabit",
+  "description": "Vattenfall Heizkraftwerk Moabit",
+  "latitude": 52.53872,
+  "longitude": 13.3522,
+  "street": "Friedrich-Krause-Ufer",
+  "zipcode": 13353,
+  "city": "Berlin",
+  "housenumber": 10,
+  "category": "stark",
+  "id": {
+    "$numberLong": "4265483507812941000"
+  }
+},
+{
+  "_id": {
+    "$oid": "649da2f0881702c8037f45b7"
+  },
+  "name": "Fernheizwerk Neukölln AG",
+  "description": "Fernheizwerk Neukölln AG",
+  "latitude": 52.4787321,
+  "longitude": 13.4542272,
+  "street": "Weigandufer",
+  "zipcode": 12059,
+  "city": "Berlin",
+  "housenumber": 49,
+  "category": "stark",
+  "id": {
+    "$numberLong": "8580979850192438000"
+  }
+}]

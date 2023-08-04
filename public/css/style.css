@@ -1,0 +1,77 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  z-index: 1001;
+}
+
+header div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#sidebar {
+  z-index: 1000;
+  position: fixed;
+  top: 72px; /* 72px entspricht der Höhe des Headers, Sidebar soll erst unter dem header anfangen */
+  left: -100%;
+  width: 300px;
+  height: calc(100vh - 72px);
+  transition: left 0.3s ease-in-out;
+  overflow-y: auto;
+}
+
+#sidebar.open {
+  left: 0;
+}
+
+.location-box {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 10px;
+}
+
+.sidebar-heading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.location-heading {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.sidebar-list {
+  overflow-y: auto;
+}
+
+.location-description {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.location-category {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.selected {
+  background-color: yellow;
+}
