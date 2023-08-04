@@ -24,5 +24,5 @@ jobs:
           forceUpload: true                         
           localDir: './'                         
           remoteDir: '/toxmap'                       
-          exclude: '.git*,.DS_Store'
+          exclude: '.git*,.DS_Store,README.md'
       
