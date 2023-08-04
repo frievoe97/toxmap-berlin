@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!------------------ Leaflet Style ------------------>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+
+    <!------------------ Leaflet JavaScript ------------------>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""
+    ></script>
+
+    <title>ToxMap</title>
+
+    <!------------------ Custom Style ------------------>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!------------------ JQuery JavaScript ------------------>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <body class="flex flex-col bg-gray-100">
+    <!------------------ Header ------------------>
+
+    <header class="bg-blue-500 py-4 px-6">
+      <div class="flex items-center justify-center">
+        <button id="hamburger-btn" class="mr-auto">
+          <span class="hamburger-menu text-white text-3xl">&#9776;</span>
+        </button>
+        <h1 id="toxmap-head" class="text-white text-2xl font-bold">ToxMap</h1>
+        <div class="ml-auto">
+          <button
+            id="abmelden-btn"
+            class="bg-white text-blue-500 hover:bg-blue-100 rounded px-4 py-2 mr-2"
+            onclick="pressLogoutButton()"
+          >
+            Abmelden
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!------------------ Sidebar ------------------>
+
+    <div id="sidebar" class="bg-blue-300 flex flex-col">
+      <h2 class="text-white sidebar-heading m-3">Orte auf der Karte</h2>
+      <h3 id="welcome-message" class="text-white sidebar-heading m-3">
+        Willkommen!
+      </h3>
+      <ul class="sidebar-list flex-grow" id="location-list"></ul>
+      <div class="flex flex-row justify-evenly">
+        <button
+          class="bg-white text-blue-500 hover:bg-blue-100 rounded px-4 py-2 m-2"
+          onclick="openAddScreen()"
+          id="add-btn"
+        >
+          Add Location
+        </button>
+        <!-- <button
+          class="bg-white text-blue-500 hover:bg-blue-100 rounded px-4 py-2 m-2"
+        >
+          Remove
+        </button> -->
+      </div>
+    </div>
+
+    <!------------------ Login-Screen ------------------>
+
+    <main id="login-screen" class="flex-grow flex items-center justify-center">
+      <form
+        class="bg-white shadow-md rounded px-8 py-6"
+        onsubmit="pressLoginButton(event)"
+        id="login-form"
+      >
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="username"
+            >Benutzername</label
+          >
+          <input
+            class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="username"
+            type="text"
+            name="username"
+            placeholder="Benutzername"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="password"
+            >Passwort</label
+          >
+          <input
+            class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Passwort"
+            required
+          />
+        </div>
+        <div class="text-center">
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Anmelden
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <!------------------ Map-Screen ------------------>
+
+    <main id="map-screen" class="flex-grow">
+      <div id="map" class="h-screen z-0"></div>
+    </main>
+
+    <!------------------ Add-Screen ------------------>
+
+    <main
+      id="add-screen"
+      class="flex-grow flex items-center justify-center px-4"
+    >
+      <div class="max-w-lg w-full">
+        <form
+          class="bg-white shadow-md rounded px-8 py-6"
+          onsubmit="pressButtonOnAddcreen(event)"
+          id="add-form"
+        >
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="lat"
+              >
+                Lat
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="lat"
+                type="text"
+                placeholder="Lat."
+                name="lat"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="lon"
+              >
+                Lon
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="lon"
+                type="text"
+                placeholder="Lon"
+                name="lon"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="name"
+              >
+                Name
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="name"
+                type="text"
+                placeholder="Name"
+                name="name"
+                required
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="street"
+              >
+                Strasse
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="street"
+                type="text"
+                placeholder="Straße"
+                name="street"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="house-number"
+              >
+                Hausnummer
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="house-number"
+                type="text"
+                placeholder="Hausnummer"
+                name="housenumber"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="zip-code"
+              >
+                PLZ
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="zip-code"
+                type="text"
+                placeholder="PLZ"
+                name="zipcode"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="city"
+              >
+                Ort
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="city"
+                type="text"
+                placeholder="Beispielstadt"
+                name="city"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="category"
+              >
+                Kategorie
+              </label>
+              <select
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="category"
+                name="category"
+              >
+                <option value="" selected disabled>Bitte wählen</option>
+                <option value="stark">stark</option>
+                <option value="mittel">mittel</option>
+                <option value="schwach">schwach</option>
+              </select>
+            </div>
+            <div class="col-span-2">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="description"
+              >
+                Beschreibung
+              </label>
+              <textarea
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24 resize-none"
+                id="description"
+                name="description"
+                placeholder="Beschreibung"
+              ></textarea>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center justify-evenly">
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+              id="save-btn"
+            >
+              Save
+            </button>
+            <button
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              id="cancel-add-btn"
+            >
+              Cancel
+            </button>
+            <button
+              class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              id="clear-btn"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!------------------ Update/Delete-Screen ------------------>
+
+    <main
+      id="update-delete-screen"
+      class="flex-grow flex items-center justify-center px-4"
+    >
+      <div class="max-w-lg w-full">
+        <form
+          class="bg-white shadow-md rounded px-8 py-6"
+          onsubmit="pressButtonOnUpdateDeleteScreen(event)"
+          id="update-delete-form"
+        >
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="lat"
+              >
+                Lat
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="lat"
+                type="text"
+                placeholder="Lat."
+                name="lat"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="lon"
+              >
+                Lon
+              </label>
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="lon"
+                type="text"
+                placeholder="Lon"
+                name="lon"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="name"
+                >Name</label
+              >
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="name"
+                type="text"
+                placeholder="Name"
+                required
+                name="name"
+                value="Hart kodierter Standort"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="street"
+                >Straße</label
+              >
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="street"
+                type="text"
+                placeholder="Straße"
+                name="street"
+                value="Hart kodiertes Beispiel"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="house-number"
+                >Hausnummer</label
+              >
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="house-number"
+                type="text"
+                placeholder="Hausnummer"
+                name="housenumber"
+                value="123"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="zip-code"
+                >PLZ</label
+              >
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="zip-code"
+                type="text"
+                placeholder="PLZ"
+                name="zipcode"
+                value="12345"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="city"
+                >Ort</label
+              >
+              <input
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="city"
+                type="text"
+                placeholder="Beispielstadt"
+                name="city"
+                value="Beispielstadt"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="category"
+              >
+                Kategorie
+              </label>
+              <select
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="category"
+                name="category"
+              >
+                <option value="" selected disabled>Bitte wählen</option>
+                <option value="stark">stark</option>
+                <option value="mittel">mittel</option>
+                <option value="schwach">schwach</option>
+              </select>
+            </div>
+            <div class="col-span-2">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="description"
+              >
+                Beschreibung
+              </label>
+              <textarea
+                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24 resize-none"
+                id="description"
+                name="description"
+                placeholder="Beschreibung"
+              ></textarea>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center justify-between">
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+              id="update-btn"
+            >
+              Update
+            </button>
+            <button
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              id="delete-btn"
+            >
+              Delete
+            </button>
+            <button
+              class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              id="cancel-update-delete-btn"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!------------------ Imprint Screen ------------------>
+
+    <main
+      id="imprint-screen"
+      class="flex-grow flex items-center justify-center px-4"
+    >
+      <div class="max-w-lg w-full">
+        <div class="bg-white shadow-md rounded px-8 py-6 relative">
+          <button
+            id="close-button-imprint"
+            class="absolute top-2 right-2 bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+          >
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <h2 class="text-3xl font-bold mb-4">Impressum</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="font-semibold">Beispielunternehmen GmbH</p>
+              <p>Musterstraße 123</p>
+              <p>12345 Beispielstadt</p>
+              <p>Deutschland</p>
+            </div>
+            <div>
+              <p class="font-semibold">Kontakt</p>
+              <p>Tel: +49 123 456789</p>
+              <p>Email: info@beispielunternehmen.de</p>
+            </div>
+          </div>
+          <div class="mt-6">
+            <p class="font-semibold">Verantwortlich für den Inhalt:</p>
+            <p>Friedrich Völkers (Matrikelnummer: 585012)</p>
+            <p>Ole Lordieck (Matrikelnummer: 582145)</p>
+          </div>
+          <p class="mt-6 text-sm">
+            Dieses Impressum enthält keine echten Informationen und dient nur zu
+            Demonstrationszwecken. Bitte ersetzen Sie die hier angegebenen Daten
+            durch Ihre eigenen Informationen.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!------------------ Privacy Policy Screen ------------------>
+
+    <main
+      id="privacy-policy-screen"
+      class="flex-grow flex items-center justify-center px-4"
+    >
+      <div class="max-w-lg w-full">
+        <div class="bg-white shadow-md rounded px-8 py-6 relative">
+          <button
+            id="close-button-privacy"
+            class="absolute top-2 right-2 bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+          >
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <h2 class="text-2xl font-bold mb-4">Datenschutzerklärung</h2>
+          <p class="mb-4">
+            Wir, Friedrich Völkers und Ole Lordieck, als Entwickler dieser
+            Anwendung, möchten klarstellen, dass keine personenbezogenen Daten
+            über diese Webseite gesammelt, gespeichert oder verarbeitet werden.
+          </p>
+          <p class="mb-4">
+            Diese Anwendung dient lediglich zu Demonstrationszwecken und enthält
+            keine Funktionen zur Erfassung oder Speicherung von Benutzerdaten.
+          </p>
+          <p class="mb-4">
+            Wenn Sie Fragen oder Bedenken bezüglich des Datenschutzes haben,
+            können Sie uns unter den folgenden Kontaktdaten erreichen:
+          </p>
+          <ul class="list-disc ml-6 mb-4">
+            <li><span class="font-bold">Friedrich Völkers:</span> 585012</li>
+            <li><span class="font-bold">Ole Lordieck:</span> 582145</li>
+          </ul>
+          <p>
+            Bitte beachten Sie, dass diese Daten nur als Beispiel dargestellt
+            sind und keine tatsächlichen Kontaktdaten darstellen.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!------------------ Footer ------------------>
+
+    <footer
+      class="py-4 px-8 bg-gray-200 mt-auto flex items-center justify-center"
+    >
+      <p>
+        <a onclick="openImprintScreen()">Impressum</a> |
+        <a onclick="openPrivacyPolicyScreen()">Datenschutz</a>
+      </p>
+    </footer>
+
+    <!------------------ Custom JavaScript ------------------>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
