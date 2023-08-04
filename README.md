@@ -30,7 +30,7 @@ To run the project locally, the following requirements must be met:
 1. Clone the repository:
 
 ```
-git clone https://github.com/frievoe97/toxmap-berlin.git
+git clone git@github.com:frievoe97/toxmap.git
 cd toxmap-berlin
 ```
 
@@ -72,7 +72,7 @@ Um das Projekt lokal auszuführen, sind folgende Voraussetzungen zu erfüllen:
 1. Klone das Repository:
 
 ```
-git clone https://github.com/frievoe97/toxmap-berlin.git
+git clone git@github.com:frievoe97/toxmap.git
 cd toxmap-berlin
 ```
 
