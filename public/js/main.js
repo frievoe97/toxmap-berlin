@@ -43,44 +43,7 @@ let showPrivacyPolicy = false;
 let lastOpenedScreen = SCREENS.LOGIN;
 
 // Liste mit allen Locations. Standard sind diese drei hartkodierten Locations
-const locationData = [
-  {
-    name: "Bundesgeschäftsstelle FDP",
-    description: "Bundesgeschäftsstelle Freie Demokratische Partei",
-    latitude: 52.5238688,
-    longitude: 13.3849966,
-    street: "Reinhardtstraße",
-    zipcode: 10117,
-    city: "Berlin",
-    housenumber: 14,
-    marker: L.marker([52.5238688, 13.3849966]),
-    category: "stark",
-  },
-  {
-    name: "Vattenfall Heizkraftwerk Moabit",
-    description: "Vattenfall Heizkraftwerk Moabit",
-    latitude: 52.53872,
-    longitude: 13.3522,
-    street: "Friedrich-Krause-Ufer",
-    zipcode: 13353,
-    city: "Berlin",
-    housenumber: 10,
-    marker: L.marker([52.5371787, 13.3451339]),
-    category: "stark",
-  },
-  {
-    name: "Fernheizwerk Neukölln AG",
-    description: "Fernheizwerk Neukölln AG",
-    latitude: 52.4787321,
-    longitude: 13.4542272,
-    street: "Weigandufer",
-    zipcode: 12059,
-    city: "Berlin",
-    housenumber: 49,
-    marker: L.marker([52.4787321, 13.4542272]),
-    category: "stark",
-  },
-];
+let locationDataDatabase = [];
 
 // Berlin Umrandung (grob)
 const latMin = 52.28196;
@@ -310,11 +273,11 @@ function updateMarkerList() {
   }
 
   // Fügt die Marker der aktuellen locationData-Liste zur Karte hinzu
-  for (let i = 0; i < locationData.length; i++) {
+  for (let i = 0; i < locationDataDatabase.length; i++) {
     markerList.push(
-      locationData[i].marker
+      locationDataDatabase[i].marker
         .on("click", function () {
-          clickOnLocationMarker(locationData[i].name);
+          clickOnLocationMarker(locationDataDatabase[i].name);
         })
         .addTo(map)
     );
@@ -326,33 +289,6 @@ function clickOnLocationMarker(msg) {
 }
 
 /////////////////////////////////////////////////////////////////////////// LOGIN ///////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Vereinfachte Implementierung einer Hash-Funktion für Passwörter.
- * @param {string} str - Der zu hashende String.
- * @returns {number} - Der Hash-Wert des Strings.
- */
-function simpleHashCode(str) {
-  let hash = 0;
-
-  for (const char of str) {
-    hash += char.charCodeAt(0);
-  }
-
-  return hash;
-}
-
-// Benutzerdaten
-const allUserData = new Map();
-allUserData.set("admina", {
-  password: simpleHashCode("password"),
-  isAdmin: true,
-});
-allUserData.set("normalo", {
-  password: simpleHashCode("password"),
-  isAdmin: false,
-});
-
 // Aktuell angemeldeter Benutzer
 let currentUser = "";
 
@@ -365,7 +301,7 @@ let lastClickedLocation;
  * Zeigt die entsprechenden Screen und Buttons basierend auf der Benutzerrolle an.
  * @param {Event} event - Das Klick-Event des Login-Buttons.
  */
-function pressLoginButton(event) {
+async function pressLoginButton(event) {
   event.preventDefault();
 
   const loginForm = document.getElementById("login-form");
@@ -373,46 +309,53 @@ function pressLoginButton(event) {
   const passwordInput = loginForm.elements["password"];
   const username = usernameInput.value;
   const password = passwordInput.value;
+  try {
+    const response = await fetch("http://localhost:3000/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ firstName: username, password: password }),
+    });
 
-  // Überprüfung der Benutzerdaten
-  if (
-    !allUserData.has(username) ||
-    allUserData.get(username).password != simpleHashCode(password)
-  ) {
-    alert("Login fehlgeschlagen!");
+    if (response.status === 401) {
+      alert("Login fehlgeschlagen!");
+      return;
+    }
+
+    const userData = await response.json();
+
+    // Aktuell angemeldeter Benutzer wird gespeichert
+    currentUser = userData.username;
+    role = userData.role;
+    // Begrüßungsnachricht anzeigen
+
+    document.getElementById("welcome-message").innerHTML = `Willkommen ${
+      currentUser.charAt(0).toUpperCase() + currentUser.slice(1).toLowerCase()
+    }!`;
+
+    openMapScreen();
+
+    // Buttons basierend auf Benutzerrolle anzeigen/verstecken
+    if (role == "admin") {
+      show(BUTTONS.ADD_BUTTON);
+      show(BUTTONS.UPDATE_BUTTON);
+      show(BUTTONS.DELETE_BUTTON);
+    } else {
+      hide(BUTTONS.ADD_BUTTON);
+      hide(BUTTONS.UPDATE_BUTTON);
+      hide(BUTTONS.DELETE_BUTTON);
+    }
+
+    // Sidebar einblenden
+    toggleSidebar(true);
+
+    // Formular zurücksetzen
     loginForm.reset();
+  } catch (error) {
+    alert("Es gab einen Fehler bei der API-Abfrage. Bitte versuche es erneut.");
     return;
   }
-
-  // Aktuell angemeldeter Benutzer wird gespeichert
-  currentUser = username;
-
-  // Begrüßungsnachricht anzeigen
-  document.getElementById("welcome-message").innerHTML = `Willkommen ${
-    currentUser.charAt(0).toUpperCase() + currentUser.slice(1).toLowerCase()
-  }!`;
-
-  openMapScreen();
-
-  // Buttons basierend auf Benutzerrolle anzeigen/verstecken
-  if (allUserData.get(username).isAdmin) {
-    show(BUTTONS.ADD_BUTTON);
-    show(BUTTONS.UPDATE_BUTTON);
-    show(BUTTONS.DELETE_BUTTON);
-  } else {
-    hide(BUTTONS.ADD_BUTTON);
-    hide(BUTTONS.UPDATE_BUTTON);
-    hide(BUTTONS.DELETE_BUTTON);
-  }
-
-  // Sidebar einblenden
-  toggleSidebar(true);
-
-  // Formular zurücksetzen
-  loginForm.reset();
-
-  console.log("Erfolgreich angemeldet als:", currentUser);
-  console.log("isAdmin:", allUserData.get(username).isAdmin);
 }
 
 /**
@@ -476,30 +419,6 @@ function addEventListenerForAddAndUpdateDeleteScreenForms() {
   });
 }
 
-// function pressButtonOnUpdateDeleteScreen(event) {
-//   event.preventDefault();
-//   const clickedButton = event.target;
-//   if (clickedButton.id === BUTTONS.UPDATE_BUTTON) {
-//     handleUpdateButton(event);
-//   } else if (clickedButton.id === BUTTONS.DELETE_BUTTON) {
-//     handleDeleteButton(event);
-//   } else if (clickedButton.id === BUTTONS.CANCEL_UPDATE_DELETE_BUTTON) {
-//     handleCancelButton(event);
-//   }
-// }
-
-// function pressButtonOnAddcreen(event) {
-//   event.preventDefault();
-//   const clickedButton = event.target;
-//   if (clickedButton.id === BUTTONS.SAVE_BUTTON) {
-//     handleSaveButton(event);
-//   } else if (clickedButton.id === BUTTONS.CANCEL_ADD_BUTTON) {
-//     handleCancelButton(event);
-//   } else if (clickedButton.id === BUTTONS.CLEAR_BUTTON) {
-//     handleClearButton(event);
-//   }
-// }
-
 /**
  * Eventhandler für das Klicken auf eine Location.
  * Aktualisiert das Update-Delete-Formular mit den Daten der angeklickten Location.
@@ -510,7 +429,9 @@ function clickOnLocationListElement(element) {
   const locationName = element.firstChild.firstChild.textContent;
 
   // Speichert das zugehörige Element aus der locationData-Liste
-  lastClickedLocation = locationData.find((item) => item.name === locationName);
+  lastClickedLocation = locationDataDatabase.find(
+    (item) => item.name === locationName
+  );
 
   // Speichert das aktuelle Update-Delete-Formular
   const updateDeleteForm = document.getElementById("update-delete-form");
@@ -696,34 +617,59 @@ async function handleUpdateButton(event) {
 
   ///////////////////////////////////////////////////////////////////////////////////////// OLE INPUT CHECK AND CONVERT TO COORDINATES <<<<<<<<<<<<<<<<<<<
 
-  // Entfernt das Element aus der locationData-Liste
-  for (let i = 0; i < locationData.length; i++) {
-    if (locationData[i].name == lastClickedLocation.name) {
-      locationData.splice(i, 1);
-    }
-  }
-
   if (coordinates) {
-    // Fügt die aktualisierte Location zur locationData-Liste hinzu
-    locationData.push({
-      name: locationName,
-      description: description,
-      latitude: coordinates.latitude,
-      longitude: coordinates.longitude,
-      street: street,
-      zipcode: zipcode,
-      city: city,
-      housenumber: housenumber,
-      marker: L.marker([coordinates.latitude, coordinates.longitude]),
-      category: category,
-    });
+    // Aktualisiert die Location in der Datenbank über eine PUT-Anfrage
+    try {
+      const response = await fetch(
+        `http://localhost:3000/nonsusLoc/${lastClickedLocation.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: locationName,
+            description: description,
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+            street: street,
+            zipcode: zipcode,
+            city: city,
+            housenumber: housenumber,
+            category: category,
+            id: lastClickedLocation.id,
+          }),
+        }
+      );
 
-    // Aktualisiert die Markerliste
-    updateMarkerList();
+      if (response.status === 200) {
+        // Aktualisiert die Location in der locationData-Liste
+        const updatedLocation = await response.json();
+        // console.log(updatedLocation.ops[0]);
+        console.log(updatedLocation);
+        const index = locationDataDatabase.findIndex(
+          (location) => location.id === lastClickedLocation.id
+        );
+        if (index !== -1) {
+          locationDataDatabase[index] = updatedLocation[0];
+        }
 
-    // Rendert die LocationData-Liste neu und wechselt zum Map-Screen
-    renderList();
-    openMapScreen();
+        console.log(locationDataDatabase);
+        // Fügt allen Locations ein Marker Attribut hinzu
+        addMarkersToLocations();
+
+        // Aktualisiert die Markerliste
+        updateMarkerList();
+
+        // Rendert die LocationData-Liste neu und wechselt zum Map-Screen
+        renderList();
+        openMapScreen();
+      } else {
+        console.log("Fehler beim Aktualisieren der Location:", response.status);
+      }
+    } catch (error) {
+      console.log("Es gab einen Fehler bei der API-Anfrage:", error);
+    }
   } else {
     alert("Fehler beim Konvertieren der Adresse in Koordinaten.");
   }
@@ -784,24 +730,46 @@ function addEventListenerClosingButton() {
  * Löscht die aktuelle Location aus der locationData-Liste.
  * @param {Event} event - Das Klick-Event des Delete-Buttons.
  */
-function handleDeleteButton(event) {
+async function handleDeleteButton(event) {
   // Verhindert das Standardverhalten des Klickereignisses
   event.preventDefault();
 
-  // Durchläuft die locationData-Liste und sucht nach der zu löschenden Location
-  for (let i = 0; i < locationData.length; i++) {
-    if (locationData[i].name == lastClickedLocation.name) {
+  // Ruft die id der zu löschenden Location ab
+  const id = lastClickedLocation.id;
+
+  // Sendet die DELETE-Anfrage an den Server
+  try {
+    const response = await fetch(`http://localhost:3000/nonsusLoc/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: lastClickedLocation.id,
+      }),
+    });
+
+    if (response.status === 200) {
       // Entfernt die Location aus der locationData-Liste
-      locationData.splice(i, 1);
+      const index = locationDataDatabase.findIndex(
+        (location) => location.id === id
+      );
+      if (index !== -1) {
+        locationDataDatabase.splice(index, 1);
+      }
+
+      // Aktualisiert die Markerliste und rendert die Locationliste neu
+      updateMarkerList();
+      renderList();
+
+      // Wechselt zum Map-Screen
+      openMapScreen();
+    } else {
+      console.log("Fehler beim Löschen der Location:", response.status);
     }
+  } catch (error) {
+    console.log("Es gab einen Fehler bei der API-Anfrage:", error);
   }
-
-  // Aktualisiert die Markerliste und rendert die Locationliste neu
-  updateMarkerList();
-  renderList();
-
-  // Wechselt zum Map-Screen
-  openMapScreen();
 }
 
 ////// CANCEL BUTTON //
@@ -937,26 +905,46 @@ async function handleSaveButton(event) {
   ///////////////////////////////////////////////////////////////////////////////////////// OLE INPUT CHECK AND CONVERT TO COORDINATES <<<<<<<<<<<<<<<<<<<
 
   if (coordinates) {
-    // Fügt eine neue Location zur locationData-Liste hinzu
-    locationData.push({
-      name: locationName,
-      description: description,
-      latitude: coordinates.latitude,
-      longitude: coordinates.longitude,
-      street: street,
-      zipcode: zipcode,
-      city: city,
-      housenumber: housenumber,
-      marker: L.marker([coordinates.latitude, coordinates.longitude]),
-      category: category,
-    });
+    // Sendet die POST-Anfrage an den Server, um die Location hinzuzufügen
+    try {
+      const response = await fetch("http://localhost:3000/nonsusLoc", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: locationName,
+          description: description,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+          street: street,
+          zipcode: zipcode,
+          city: city,
+          housenumber: housenumber,
+          category: category,
+        }),
+      });
 
-    // Aktualisiert die Markerliste und rendert die Locationliste neu
-    updateMarkerList();
-    renderList();
+      if (response.status === 200) {
+        // Aktualisiert die locationDataDatabase mit der neuen Location
+        const newLocation = await response.json();
+        console.log(newLocation[0]);
+        locationDataDatabase.push(newLocation[0]);
 
-    // Wechselt zum Map-Screen
-    openMapScreen();
+        addMarkersToLocations();
+
+        // Aktualisiert die Markerliste und rendert die Locationliste neu
+        updateMarkerList();
+        renderList();
+
+        // Wechselt zum Map-Screen
+        openMapScreen();
+      } else {
+        console.log("Fehler beim Hinzufügen der Location:", response.status);
+      }
+    } catch (error) {
+      console.log("Es gab einen Fehler bei der API-Anfrage:", error);
+    }
   } else {
     alert("Fehler beim Konvertieren der Adresse in Koordinaten.");
   }
@@ -991,13 +979,14 @@ function handleClearButton(event) {
  * Rendert die Locationliste auf der Webseite in der Sidebar.
  */
 function renderList() {
+  console.log(locationDataDatabase);
   // Zugriff auf das Element, in dem die Locationliste angezeigt wird
   const locationList = document.getElementById("location-list");
   // Zurücksetzen des Inhalts, um vorherige Einträge zu löschen
   locationList.innerHTML = "";
 
   // Erstellen der Listenelemente basierend auf den Location-Daten
-  const listItems = locationData.map((element) => {
+  const listItems = locationDataDatabase.map((element) => {
     // Erstellen der DOM-Elemente für einen Listeneintrag
     const listItem = document.createElement("li");
     const locationBox = document.createElement("div");
@@ -1040,8 +1029,8 @@ function renderList() {
  * @returns {boolean} - Gibt true zurück, wenn der Name bereits vorhanden ist, andernfalls false.
  */
 function isNameAlreadyExists(name) {
-  for (let i = 0; i < locationData.length; i++) {
-    if (locationData[i].name === name) {
+  for (let i = 0; i < locationDataDatabase.length; i++) {
+    if (locationDataDatabase[i].name === name) {
       return true;
     }
   }
@@ -1051,28 +1040,37 @@ function isNameAlreadyExists(name) {
 /////////////////////////////////////////////////////////////////////////////// INIT ////////////////////////////////////////////////////////////////////////////////////
 
 // Initialisierung
-function init() {
+async function getAllLocations() {
+  try {
+    const response = await fetch("http://localhost:3000/nonsusLoc");
+    if (response.status === 200) {
+      const locations = await response.json();
+      console.log("Alle Locations:", locations);
+      return locations;
+    } else {
+      console.log("Fehler beim Abrufen der Locations:", response.status);
+      return;
+    }
+  } catch (error) {
+    console.log("Es gab einen Fehler bei der API-Abfrage:", error);
+    return;
+  }
+}
+
+function addMarkersToLocations() {
+  locationDataDatabase.forEach((location) => {
+    location.marker = L.marker([location.latitude, location.longitude]);
+  });
+}
+
+async function init() {
   openLoginScreen();
   addEventListenerClosingButton();
   addEventListenerForAddAndUpdateDeleteScreenForms();
-  renderList();
+  locationDataDatabase = await getAllLocations();
+  addMarkersToLocations();
   updateMarkerList();
+  renderList();
 }
 
 init();
-
-// DONE/TODO:
-//
-// -  Beschreibung und Dropdown implementieren (bis jetzt nur im .html vorhanden)
-// >  TODO können wir evtl rausnehmen war eh optional und dann passt es auch besser mit lat lon
-//
-// -  Impressum und Datenschutzerklärung wieder ausblenden (Evtl. über erneutes
-//    klicken oder auf den Titel "ToxMap" klicken)
-// >  TODO
-//
-// -  Sidebar ausblenden beim Impressum/PrivacyPolicy öffnen und wieder einblenden,
-//    falls das vorher der Fall war.
-// >  TODO
-//
-// -  1. und 2. Aufgabenblatt durchgehen und sicherstellen, dass alles vorhanden ist.
-// >  TODO kann man nicht oft genug machen :D
