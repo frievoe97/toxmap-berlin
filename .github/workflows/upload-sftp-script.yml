@@ -19,6 +19,6 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           dryRun: false
           forceUpload: true                         
-          localDir: 'dist'                         
+          localDir: './'                         
           remoteDir: '/toxmap'                       
           exclude: '.git*,.DS_Store'
