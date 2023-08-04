@@ -22,3 +22,6 @@ jobs:
           localDir: './'                         
           remoteDir: '/toxmap'                       
           exclude: '.git*,.DS_Store'
+      - name: 📝 Create .env.js with API key
+        run: |
+          echo "window.env = { API_KEY: '$API_KEY' }" > .env.js          
