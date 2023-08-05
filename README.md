@@ -18,10 +18,10 @@ ToxMap Berlin is an interactive website developed as part of a university projec
 
 To run the project locally, the following requirements must be met:
 
-1. For the version without MongoDB (main branch):
+1. For the version without MongoDB ([main](https://github.com/frievoe97/toxmap-berlin/tree/main) branch):
    - No additional requirements. The project can be opened directly in a web browser.
 
-2. For the version with MongoDB (node-mongo-db-version branch):
+2. For the version with MongoDB ([node-mongo-db-version](https://github.com/frievoe97/toxmap-berlin/tree/node-mongo-db-version) branch):
    - Local MongoDB database with the collections "locations" and "user" in the database "toxMap".
    - The required data is stored in the ".json" format in the "database" folder.
 
@@ -60,10 +60,10 @@ ToxMap Berlin ist eine interaktive Webseite, die im Rahmen eines Universitätspr
 
 Um das Projekt lokal auszuführen, sind folgende Voraussetzungen zu erfüllen:
 
-1. Für die Version ohne MongoDB (main branch):
+1. Für die Version ohne MongoDB ([main](https://github.com/frievoe97/toxmap-berlin/tree/main) branch):
    - Keine weiteren Anforderungen. Das Projekt kann direkt im Browser geöffnet werden.
 
-2. Für die Version mit MongoDB (node-mongo-db-version branch):
+2. Für die Version mit MongoDB ([node-mongo-db-version](https://github.com/frievoe97/toxmap-berlin/tree/node-mongo-db-version) branch):
    - Lokale MongoDB-Datenbank mit den Collections "locations" und "user" in der Datenbank "toxMap".
    - Die benötigten Daten sind im .json-Format im "database" Ordner gespeichert.
 
